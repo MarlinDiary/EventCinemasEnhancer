@@ -75,14 +75,15 @@ function createRatingsContainer(): HTMLDivElement {
   const container = document.createElement('div');
   container.className = 'rating-enhancer';
   container.style.cssText = `
-    padding: 4px 8px;
-    margin: 4px 0;
+    padding: 3px 10px;
+    margin: 2px auto;
     background: rgba(0,0,0,0.8);
-    border-radius: 4px;
+    border-radius: 12px;
     font-size: 11px;
     color: white;
-    display: inline-block;
+    display: block;
     text-align: center;
+    width: fit-content;
   `;
   container.textContent = 'Loading...';
   return container;
@@ -91,16 +92,10 @@ function createRatingsContainer(): HTMLDivElement {
 // Fetch movie ratings from IMDb
 async function fetchRatings(movieTitle: string, container: HTMLElement) {
   try {
-    const currentYear = new Date().getFullYear();
-    // Try with year first for better accuracy
     const ratings = await browser.runtime.sendMessage({
-      type: 'GET_RATINGS',
-      movieTitle: `${movieTitle} ${currentYear}`
-    }) || await browser.runtime.sendMessage({
       type: 'GET_RATINGS',
       movieTitle
     });
-    
     displayRatings(ratings, container);
   } catch {
     container.innerHTML = '<span style="color: #888; font-size: 10px;">Failed to load</span>';
@@ -109,33 +104,28 @@ async function fetchRatings(movieTitle: string, container: HTMLElement) {
 
 // Display rating information
 function displayRatings(ratings: any, container: HTMLElement) {
-  if (!ratings || (!ratings.imdbRating && !ratings.imdbUrl)) {
+  if (!ratings?.imdbUrl) {
     container.innerHTML = '<span style="color: #888; font-size: 10px;">No data</span>';
     return;
   }
   
-  const imdbUrl = ratings.imdbUrl || `https://www.imdb.com/title/${ratings.imdbId || ''}`;
+  const link = document.createElement('a');
+  link.href = ratings.imdbUrl;
+  link.target = '_blank';
+  link.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; text-decoration: none; cursor: pointer;';
   
   if (ratings.imdbRating) {
     const score = parseFloat(ratings.imdbRating);
-    const scoreColor = getScoreColor(score);
-    container.innerHTML = `
-      <a href="${imdbUrl}" target="_blank" 
-         style="display: inline-flex; align-items: center; gap: 4px; text-decoration: none; cursor: pointer;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/IMDB_Logo_2016.svg" 
-             style="height: 12px; filter: brightness(0) invert(1);" alt="IMDb">
-        <strong style="color: ${scoreColor};">${ratings.imdbRating}</strong>
-        ${ratings.imdbVotes ? `<span style="color: #999; font-size: 9px;">(${ratings.imdbVotes})</span>` : ''}
-      </a>
+    link.innerHTML = `
+      <strong style="color: ${getScoreColor(score)};">${ratings.imdbRating}</strong>
+      ${ratings.imdbVotes ? `<span style="color: #999; font-size: 9px;">(${ratings.imdbVotes})</span>` : ''}
     `;
   } else {
-    container.innerHTML = `
-      <a href="${imdbUrl}" target="_blank" 
-         style="color: #f5c518; text-decoration: none; cursor: pointer;">
-        <span style="font-size: 10px;">View IMDb</span>
-      </a>
-    `;
+    link.innerHTML = '<span style="color: #f5c518; font-size: 10px;">View IMDb</span>';
   }
+  
+  container.innerHTML = '';
+  container.appendChild(link);
 }
 
 // Get color based on rating score

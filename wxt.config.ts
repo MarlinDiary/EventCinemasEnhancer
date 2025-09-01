@@ -7,7 +7,8 @@ export default defineConfig({
     description: 'Display IMDb ratings on Event Cinemas website',
     version: '1.0.0',
     permissions: [
-      'activeTab'
+      'activeTab',
+      'storage'
     ]
   }
 });
