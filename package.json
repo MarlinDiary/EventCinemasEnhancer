@@ -1,6 +1,6 @@
 {
-  "name": "wxt-starter",
-  "description": "manifest.json description",
+  "name": "event-cinema-enhancer",
+  "description": "Display movie ratings on Event Cinemas website",
   "private": true,
   "version": "0.0.0",
   "type": "module",
