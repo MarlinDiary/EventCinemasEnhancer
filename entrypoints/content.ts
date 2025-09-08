@@ -40,6 +40,7 @@ function runEnhancements() {
   enhanceMovieCards();
   injectNoShadowCSS();
   hideExperienceSections();
+  hideHeaderFooterSections();
   removeAdElements();
 }
 
@@ -111,6 +112,33 @@ async function fetchRatings(movieTitle: string, container: HTMLElement) {
   } catch {
     container.innerHTML = '<span style="color: #888; font-size: 10px;">Failed to load</span>';
   }
+}
+
+// Hide footer cinemas list, global header links, and slider arrows
+function hideHeaderFooterSections() {
+  try {
+    const selector = [
+      '.footer-cinemas',
+      '.left-arrow.arrow',
+      '.right-arrow.arrow',
+    ].join(', ');
+    document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+      el.style.setProperty('display', 'none', 'important');
+      el.remove();
+    });
+
+    const styleId = 'ece-hide-header-footer-style';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        .footer-cinemas,
+        .left-arrow.arrow,
+        .right-arrow.arrow { display: none !important; }
+      `;
+      document.head.appendChild(style);
+    }
+  } catch {}
 }
 
 // Display rating information
