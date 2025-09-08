@@ -10,9 +10,6 @@ export default defineConfig({
       'https://search.imdbot.workers.dev/*',
       'https://www.omdbapi.com/*',
     ],
-    permissions: [
-      'activeTab',
-      'storage'
-    ]
+    permissions: ['storage']
   }
 });
