@@ -6,6 +6,10 @@ export default defineConfig({
     name: 'Event Cinema Enhancer',
     description: 'Display IMDb ratings on Event Cinemas website',
     version: '1.0.0',
+    host_permissions: [
+      'https://search.imdbot.workers.dev/*',
+      'https://www.omdbapi.com/*',
+    ],
     permissions: [
       'activeTab',
       'storage'
